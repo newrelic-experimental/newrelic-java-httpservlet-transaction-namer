@@ -306,7 +306,7 @@ The Zip contents will be as follows
 
 ## Testing
 
->[**Optional** - Include instructions on how to run tests if we include tests with the codebase. Remove this section if it's not needed.]
+There is a `test` gradle target defined for this project that runs JUnit tests.
 
 ## Support
 
