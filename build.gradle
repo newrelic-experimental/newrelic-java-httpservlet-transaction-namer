@@ -1,0 +1,77 @@
+buildscript {
+  repositories {
+    maven {
+      url 'https://plugins.gradle.org/m2/'
+    }
+  }
+  dependencies {
+    classpath 'gradle.plugin.de.fntsoftware.gradle:markdown-to-pdf:1.1.0'
+  }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'distribution'
+apply plugin: 'de.fntsoftware.gradle.markdown-to-pdf'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+   maven {
+     url 'https://repo1.maven.org/maven2'
+   }
+}
+
+group = 'com.newrelic.instrumentation'
+version = '2.1'
+
+dependencies {
+  // Agent and Weave API jars:
+  compile 'com.newrelic.agent.java:newrelic-api:5.8.0'
+  compile 'com.newrelic.agent.java:newrelic-agent:5.8.0'
+
+  // 3rd party jars needed to compile:
+  compile 'javax.servlet:servlet-api:2.5'
+
+  testImplementation('org.junit.jupiter:junit-jupiter:5.4.1')
+}
+
+test {
+  useJUnitPlatform()
+}
+
+jar {
+  manifest {
+    attributes 'Implementation-Title': project.group + '.' + project.name,
+    'Implementation-Vendor': project.group,
+    'Implementation-Version': version
+  }
+}
+
+javadoc {
+  destinationDir = file("$projectDir/doc/javadoc")
+  include 'com/newrelic/fit/javax/servlet/http/ServletInstrumentation.java'
+  options.links(
+    'http://newrelic.github.io/java-agent-api/javadoc/index.html?com/newrelic/api/agent/',
+    'https://javaee.github.io/javaee-spec/javadocs/'
+  )
+}
+
+distributions {
+  main {
+    baseName = 'httpservlet-transaction-namer'
+    contents {
+      from 'build/libs'
+      from 'doc'
+      from('build') {
+        include 'README.pdf'
+      }
+    }
+  }
+}
+
+//task wrapper(type: Wrapper) {
+wrapper {
+  gradleVersion = '4.4' //version required
+}
