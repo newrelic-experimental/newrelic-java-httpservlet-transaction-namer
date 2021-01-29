@@ -1,6 +1,6 @@
 [![New Relic Experimental header](https://github.com/newrelic/opensource-website/raw/master/src/images/categories/Experimental.png)](https://opensource.newrelic.com/oss-category/#new-relic-experimental)
 
-# HTTPServlet Transaction Namer
+# New Relic Java Agent - HTTPServlet Transaction Namer
 
 A New Relic Java Agent extension that provides the ability to add custom instrumentation around the J2EE `javax.servlet.http.HttpServlet#service()` method.
 
