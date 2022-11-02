@@ -97,8 +97,8 @@ public class TransactionNamer implements ServletInstrumentation {
 		}
 	}
 
-	private LinkedHashMap<Integer, Parameter> parametersToAppend = new LinkedHashMap<Integer, Parameter>();
-	private LinkedHashMap<String, Obfuscation> obfuscationPatterns = new LinkedHashMap<String, Obfuscation>();
+	private Map<Integer, Parameter> parametersToAppend = new LinkedHashMap<Integer, Parameter>();
+	private Map<String, Obfuscation> obfuscationPatterns = new LinkedHashMap<String, Obfuscation>();
 	private LinkedList<Pattern> groupingPatterns = new LinkedList<Pattern>();
 
 	private static final Logger LOGGER = NewRelic.getAgent().getLogger();
@@ -166,8 +166,7 @@ public class TransactionNamer implements ServletInstrumentation {
 
 	private void initGroupings(Config nrConfig) {
 		LOGGER.log(Level.FINER, "HTTPServlet-transaction-namer - Name Grouper - initializing grouping patterns.");
-		LOGGER.log(Level.FINER, "HTTPServlet-transaction-namer - Name Obfuscator - initializing obfuscation patterns.");
-		List<String> txnPatterns = Utilities.getStringList(nrConfig.getValue("httpservlet_transaction_namer.name_obfuscator.patterns"));
+		List<String> txnPatterns = Utilities.getStringList(nrConfig.getValue("httpservlet_transaction_namer.name_grouper.patterns"));
 		if (txnPatterns == null) {
 			LOGGER.log(Level.FINER, "HTTPServlet-transaction-namer - Name Grouper - grouping patterns not defined.");
 			LOGGER.log(Level.FINER, "HTTPServlet-transaction-namer - Name Grouper - use \"patterns:\" in newrelic.yml with patterns in an indented list, or a space-delimited string.");
@@ -179,6 +178,7 @@ public class TransactionNamer implements ServletInstrumentation {
 				Pattern thisGrouping = Pattern.compile(thisPattern);
 				if (!groupingPatterns.contains(thisGrouping)) {
 					groupingPatterns.add(thisGrouping);
+					LOGGER.log(Level.FINER, "HTTPServlet-transaction-namer - Name Grouper - added pattern: " + thisPattern);
 				}
 			} catch (Exception e) {
 				LOGGER.log(Level.FINER, "HTTPServlet-transaction-namer - Name Grouper - invalid pattern: " + thisPattern);
@@ -239,7 +239,7 @@ public class TransactionNamer implements ServletInstrumentation {
 		}
 		for (Object thisParamObj : (List<Object>) paramsObj) {
 			if ((thisParamObj != null) && (thisParamObj instanceof Map)) {
-				LinkedHashMap<String, String> thisParamMap = (LinkedHashMap<String, String>) thisParamObj;
+				Map<String, String> thisParamMap = (Map<String, String>) thisParamObj;
 				if ((thisParamMap != null) && thisParamMap.containsKey("name") && thisParamMap.containsKey("type")) {
 					String name = thisParamMap.get("name");
 					String type = thisParamMap.get("type");
@@ -348,8 +348,14 @@ public class TransactionNamer implements ServletInstrumentation {
 		Transaction transaction
 	) throws ServletException, IOException {
 		LOGGER.log(Level.FINER, "HTTPServlet-transaction-namer - Activated for this request.");
-		String txnAppend = "";
 		String URI = request.getRequestURI();
+
+		if(isParameterAppendingEnabled()) {
+			String txnAppend = appendParameters(request);
+			if (!txnAppend.isEmpty()) {
+				URI += "/" + txnAppend;
+			}
+		}
 
 		if(isGroupingEnabled()) {
 			URI = groupURI(URI);
@@ -374,22 +380,11 @@ public class TransactionNamer implements ServletInstrumentation {
 			}
 		}
 
-		if(isParameterAppendingEnabled()) {
-			txnAppend = appendParameters(request);
-		}
-
 		if (URI != null && !URI.isEmpty()) {
-			if(txnAppend == null ||  txnAppend.isEmpty()) {
-				LOGGER.log(Level.FINER,
-					"HTTPServlet-transaction-namer - setting transaction name to: " + URI);
-				transaction.setTransactionName(TransactionNamePriority.CUSTOM_HIGH,
-					false, "HTTPServlet", URI);
-			} else {
-				LOGGER.log(Level.FINER,
-					"HTTPServlet-transaction-namer - setting transaction name to: " + URI + "/" + txnAppend);
-				transaction.setTransactionName(TransactionNamePriority.CUSTOM_HIGH,
-					false, "HTTPServlet", URI, txnAppend);
-			}
+			LOGGER.log(Level.FINER,
+				"HTTPServlet-transaction-namer - setting transaction name to: " + URI);
+			transaction.setTransactionName(TransactionNamePriority.CUSTOM_HIGH,
+				false, "HTTPServlet", URI);
 		}
 	}
 }
