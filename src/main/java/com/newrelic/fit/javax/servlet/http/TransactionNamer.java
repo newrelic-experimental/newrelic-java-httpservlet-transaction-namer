@@ -97,8 +97,8 @@ public class TransactionNamer implements ServletInstrumentation {
 		}
 	}
 
-	private LinkedHashMap<Integer, Parameter> parametersToAppend = new LinkedHashMap<Integer, Parameter>();
-	private LinkedHashMap<String, Obfuscation> obfuscationPatterns = new LinkedHashMap<String, Obfuscation>();
+	private Map<Integer, Parameter> parametersToAppend = new LinkedHashMap<Integer, Parameter>();
+	private Map<String, Obfuscation> obfuscationPatterns = new LinkedHashMap<String, Obfuscation>();
 	private LinkedList<Pattern> groupingPatterns = new LinkedList<Pattern>();
 
 	private static final Logger LOGGER = NewRelic.getAgent().getLogger();
@@ -239,7 +239,7 @@ public class TransactionNamer implements ServletInstrumentation {
 		}
 		for (Object thisParamObj : (List<Object>) paramsObj) {
 			if ((thisParamObj != null) && (thisParamObj instanceof Map)) {
-				LinkedHashMap<String, String> thisParamMap = (LinkedHashMap<String, String>) thisParamObj;
+				Map<String, String> thisParamMap = (Map<String, String>) thisParamObj;
 				if ((thisParamMap != null) && thisParamMap.containsKey("name") && thisParamMap.containsKey("type")) {
 					String name = thisParamMap.get("name");
 					String type = thisParamMap.get("type");
