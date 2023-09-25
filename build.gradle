@@ -23,7 +23,7 @@ repositories {
    }
 }
 
-group = 'com.newrelic.instrumentation'
+group = 'com.newrelic.instrumentation.labs'
 version = '2.1.1'
 
 dependencies {
