@@ -15,7 +15,7 @@ To begin using this extension:
 
     | Asset | Description |
     | --- | --- |
-    | httpservlet-transaction-namer-2.1.jar | The extension JAR file |
+    | httpservlet-transaction-namer.jar | The extension JAR file |
     | README.pdf | The PDF instructions for usage |
     | javadoc/* | The public API documentation |
 
