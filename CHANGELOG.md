@@ -1,3 +1,13 @@
+## Version: [v2.1.2](https://github.com/newrelic-experimental/newrelic-java-httpservlet-transaction-namer/releases/tag/v2.1.2) | Created: 2023-10-09
+### Build Upgrades
+- Updated vendor title and added release workflow
+
+### Bug Fixes
+- Fixed build issue
+- Modified build process
+- Fixed build issues
+
+
 ## Installation
 
 To install:
