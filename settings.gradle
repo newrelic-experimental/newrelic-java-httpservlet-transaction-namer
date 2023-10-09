@@ -1,4 +1,2 @@
 rootProject.name = 'java-instrumentation-template'
-include 'transaction-listener-service'
-include 'transaction-listener-service'
 include 'httpservlet-transaction-namer'
