@@ -8,30 +8,16 @@ A New Relic Java Agent extension that provides the ability to add custom instrum
 
 ## Installation
 
-To begin using this extension:
+To install:
 
-1. Obtain the distribution from New Relic Expert Services.  The distributable is named httpservlet-transaction-namer-VERSION.zip.
-1. Extract the distribution into a local directory.  The contents of the distributable are as follows.
-
-    | Asset | Description |
-    | --- | --- |
-    | httpservlet-transaction-namer.jar | The extension JAR file |
-    | README.pdf | The PDF instructions for usage |
-    | javadoc/* | The public API documentation |
-
-1. Transfer the extension JAR file to the target server
-    ```sh
-    scp ./httpservlet-transaction-namer-2.1/httpservlet-transaction-namer-2.1.jar myserver.com:/home/me
-    ```
-1. Copy the extension JAR file into the agent's `extensions` directory (relative to the directory containing the `newrelic.jar` file).
-    *Note:* Create the `extensions` directory if it does not exist.
-    ```sh
-    cp /home/me/httpservlet-transaction-namer-2.1.jar /opt/newrelic/extensions
-    ```
-1. Add the appropriate settings to `newrelic.yml` as described in the [Configuration](#configuration) section.
-1. Restart your JVM
-1. After the app has reloaded, generate traffic against your app that will trigger transactions that you expect to see renamed.
-1. To debug issues, set `log_level` to `finer` in `newrelic.yml`.
+1. Download the latest release jar files.
+2. In the New Relic Java directory (the one containing newrelic.jar), create a directory named extensions if it does not already exist.
+3. Copy the downloaded jars into the extensions directory.
+4. Restart the application.  
+5. Add the appropriate settings to `newrelic.yml` as described in the [Configuration](#configuration) section.
+6. Restart your JVM
+7. After the app has reloaded, generate traffic against your app that will trigger transactions that you expect to see renamed.
+8. To debug issues, set `log_level` to `finer` in `newrelic.yml`.
 
 ## Getting Started
 
