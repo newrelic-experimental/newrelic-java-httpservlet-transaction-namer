@@ -34,6 +34,8 @@ All configuration of this extension is done in `newrelic.yml` or alternatively, 
 1. See the [renaming options](#transactionnamer-renaming-options) to determine which to use.
 1. Ensure that the indentation levels of the `httpservlet_transaction_namer` section match exactly to the way they appear in the template below. **Every indentation in YAML is 2 spaces (_NOT_ tabs)**. The `httpservlet_transaction_namer:` line should have exactly 2 spaces in front of it, the next line should have 4, and so on.
 
+
+
 ### Configuration Template
 
 ```yaml
@@ -212,6 +214,27 @@ _Pattern 4: Replace regex pattern everywhere in URL path_
   * `/VehicleApplication/AB1CDE2EFGH567890` grouped as `/VehicleApplication/<obfuscatedVin>`
   * `/VehicleApplication/AB1CDE2EFGH567890/AnotherSegment/IJ1KLM2NOPQ567890/TheEnd` grouped as `/VehicleApplication/<obfuscatedVin>/AnotherSegment/<obfuscatedVin>/TheEnd`
 
+#### Excluding request.uri attribute 
+
+The most recent Java agent versions have introduced constraints on altering agent attributes. This makes it necessary to exclude the "request.uri" attribute and utilize the obfuscated "custom.request.uri" instead. To apply this change, navigate to the newrelic.yml file, locate the "attributes" section, and modify the "exclude" parameter as described below:
+
+```yaml
+ # Provides the ability to configure the attributes sent to New Relic. These
+ # attributes can be found in transaction traces, traced errors,
+ # transaction events, and page views.
+ attributes:
+
+  # When true, attributes will be sent to New Relic. The default is true.
+  enabled: true 
+  #A comma separated list of attribute keys whose values should
+  # be sent to New Relic.
+  #include: 
+
+  # A comma separated list of attribute keys whose values should
+  # not be sent to New Relic.
+  exclude: request.uri
+```
+
 ### Custom instrumentation
 
 Additional custom instrumentations can be created as follows.
@@ -257,38 +280,12 @@ configuration (newrelic.yml) as follows.
 
 ## Building
 
-This project uses the Gradle build technology for building the distributable
-assets.  The Gradle `distribution` plugin is used to actually build the
-distribution file that can be provided to customers.
-
-To build the distribution, perform the following steps.
-
-1. Clone this repository
-
-    ```sh
-    git clone https://source.datanerd.us/sdewitt/httpservlet-transaction-namer
-    ```
-
-1. Build the distribution
-
-    ```sh
-    cd httpservlet-transaction-namer
-    ./gradlew clean build buildPdf distZip
-    ```
-
-This will produce the following asset in the build directory:
-
-```
-./build/distributions/httpservlet-transaction-namer-VERSION.zip
-```
-
-The Zip contents will be as follows
-
-| Asset | Description |
-| --- | --- |
-| httpservlet-transaction-namer-2.1.jar | The extension JAR file |
-| README.pdf | The PDF instructions for usage |
-| javadoc/* | The public API documentation |
+If you make changes to the instrumentation code and need to build the instrumentation jars, follow these steps
+1. Set environment variable NEW_RELIC_EXTENSIONS_DIR.  Its value should be the directory where you want to build the jars (i.e. the extensions directory of the Java Agent).   
+2. Build one or all of the jars.   
+a. To build one jar, run the command:  gradlew httpservlet-transaction-namer:clean httpservlet-transaction-namer:install   
+b. To build all jars, run the command: gradlew clean install
+3. Restart the application
 
 ## Testing
 
